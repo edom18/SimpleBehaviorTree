@@ -22,11 +22,19 @@ namespace BehaviorTreeSample
         }
 
         /// <summary>
+        /// Behavior Tree起動時に一度だけ呼ばれる
+        /// </summary>
+        public virtual void OnAwake()
+        {
+            // do nothing.
+        }
+
+        /// <summary>
         /// ノードが実行されたら呼ばれる
         /// </summary>
         public virtual void OnStart()
         {
-            _status = BehaviorStatus.Active;
+            _status = BehaviorStatus.Running;
         }
 
         /// <summary>
@@ -40,6 +48,15 @@ namespace BehaviorTreeSample
         public virtual void OnEnd()
         {
             _status = BehaviorStatus.Inactive;
+        }
+
+        /// <summary>
+        /// 子ノードを追加する
+        /// </summary>
+        /// <param name="child">追加する子ノード</param>
+        public virtual void AddNode(Node child)
+        {
+
         }
     }
 }

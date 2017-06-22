@@ -2,38 +2,19 @@
 {
     public class Selector : CompositeNode
     {
-        public Selector(Node[] nodes) : base(nodes) { }
-
-        public override BehaviorStatus OnUpdate()
+        /// <summary>
+        /// 子ノードの実行が終わった際に呼び出される
+        /// </summary>
+        /// <param name="childStatus">子ノードの実行結果</param>
+        public override void OnChildExecuted(BehaviorStatus childStatus)
         {
-            // すでに成功している場合はなにもしない
-            if (_status == BehaviorStatus.Sucess)
-            {
-                return BehaviorStatus.Sucess;
-            }
+            _currentChildIndex++;
+            _status = childStatus;
+        }
 
-            while (true)
-            {
-                Node node = _childNodes.Current;
-                BehaviorStatus status = node.OnUpdate();
-
-                if (status == BehaviorStatus.Sucess)
-                {
-                    _status = BehaviorStatus.Sucess;
-                    return BehaviorStatus.Sucess;
-                }
-                else if (status == BehaviorStatus.Running)
-                {
-                    return BehaviorStatus.Running;
-                }
-
-                if (!MoveNextNode())
-                {
-                    // すべての子ノードがひとつもSucessを返さなかった場合はFailure
-                    _status = BehaviorStatus.Failure;
-                    return BehaviorStatus.Failure;
-                }
-            }
+        public override bool CanExecute()
+        {
+            return _currentChildIndex < _children.Count && _status != BehaviorStatus.Sucess;
         }
     }
 }

@@ -5,38 +5,19 @@
     /// </summary>
     public class Sequencer : CompositeNode
     {
-        public Sequencer(Node[] nodes) : base(nodes) { }
-
-        public override BehaviorStatus OnUpdate()
+        /// <summary>
+        /// 子ノードの実行が終わった際に呼び出される
+        /// </summary>
+        /// <param name="childStatus">子ノードの実行結果</param>
+        public override void OnChildExecuted(BehaviorStatus childStatus)
         {
-            // すでに成功している場合はなにもしない
-            if (_status == BehaviorStatus.Sucess)
-            {
-                return BehaviorStatus.Sucess;
-            }
+            _currentChildIndex++;
+            _status = childStatus;
+        }
 
-            while (true)
-            {
-                Node node = _childNodes.Current;
-                BehaviorStatus status = node.OnUpdate();
-
-                if (status == BehaviorStatus.Failure)
-                {
-                    _status = BehaviorStatus.Failure;
-                    return BehaviorStatus.Failure;
-                }
-                else if (status == BehaviorStatus.Running)
-                {
-                    return BehaviorStatus.Running;
-                }
-
-                // 子ノードがすべてSucessだった場合はSucess
-                if (!MoveNextNode())
-                {
-                    _status = BehaviorStatus.Sucess;
-                    return BehaviorStatus.Sucess;
-                }
-            }
+        public override bool CanExecute()
+        {
+            return _currentChildIndex < _children.Count && _status != BehaviorStatus.Failure;
         }
     }
 }

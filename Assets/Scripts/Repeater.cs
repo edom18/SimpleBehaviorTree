@@ -25,7 +25,7 @@
         /// </summary>
         private void Restart()
         {
-            _status = BehaviorStatus.Active;
+            _status = BehaviorStatus.Running;
             _targetNode.OnEnd();
             _targetNode.OnStart();
         }

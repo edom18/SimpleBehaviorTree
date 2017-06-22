@@ -7,19 +7,64 @@ namespace BehaviorTreeSample
     /// </summary>
     public class CompositeNode : Node
     {
-        protected IEnumerator<Node> _childNodes;
+        //protected IEnumerator<Node> _childNodes;
 
-        public CompositeNode(Node[] nodes)
+        protected int _currentChildIndex = 0;
+        public int CurrentChildIndex
         {
-            _childNodes = new List<Node>(nodes).GetEnumerator();
+            get { return _currentChildIndex; }
+        }
+
+        protected List<Node> _children = new List<Node>();
+        public List<Node> Children
+        {
+            get { return _children; }
+        }
+
+        public CompositeNode()
+        {
+
+        }
+
+        #region ### CompositeNode ###
+        public virtual bool CanExecute()
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// 中断が検知された際に呼び出される
+        /// </summary>
+        /// <param name="childIndex">中断を呼び出した子ノードのインデックス</param>
+        public virtual void OnConditionalAbort(int childIndex)
+        {
+
+        }
+
+        /// <summary>
+        /// 子ノードの実行が終わった際に呼び出される
+        /// </summary>
+        /// <param name="childStatus">子ノードの実行結果</param>
+        public virtual void OnChildExecuted(BehaviorStatus childStatus)
+        {
+
+        }
+        #endregion ### CompositeNode ###
+
+        /// <summary>
+        /// 起動。すべての子ノードのOnAwakeを呼ぶ
+        /// </summary>
+        public override void OnAwake()
+        {
+            _currentChildIndex = 0;
         }
 
         public override void OnStart()
         {
-            base.OnStart();
-
-            _childNodes.Reset();
-            MoveNextNode();
+            if (CanExecute())
+            {
+                Node current = _children[_currentChildIndex];
+            }
         }
 
         public override BehaviorStatus OnUpdate()
@@ -27,26 +72,12 @@ namespace BehaviorTreeSample
             return _status;
         }
 
-        /// <summary>
-        /// 次のノードに進める
-        /// </summary>
-        /// <returns></returns>
-        protected bool MoveNextNode()
+        public override void AddNode(Node child)
         {
-            if (_childNodes.Current != null)
+            if (!_children.Contains(child))
             {
-                _childNodes.Current.OnEnd();
+                _children.Add(child);
             }
-
-            if (!_childNodes.MoveNext())
-            {
-                return false;
-            }
-
-            Node node = _childNodes.Current;
-            node.OnStart();
-
-            return true;
         }
     }
 }
