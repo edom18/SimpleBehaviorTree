@@ -53,7 +53,8 @@ public class SBTTest : MonoBehaviour
             return BehaviorStatus.Running;
         });
 
-        Sequencer seq1 = new Sequencer(new Node[] { condition, rotateToPoint1, movetoPoint1 });
+        Sequencer seq1 = new Sequencer();
+        seq1.AddNodes(condition, rotateToPoint1, movetoPoint1);
         #endregion ### ポイント1への移動 ###
 
         #region ### ポイント2への移動 ###
@@ -80,13 +81,18 @@ public class SBTTest : MonoBehaviour
             return BehaviorStatus.Running;
         });
 
-        Sequencer seq2 = new Sequencer(new Node[] { rotateToPoint2, movetoPoint2 });
+        Sequencer seq2 = new Sequencer();
+        seq2.AddNodes(rotateToPoint2, movetoPoint2);
         #endregion ### ポイント2への移動 ###
 
         // 定義したビヘイビアを設定
-        Selector selector = new Selector(new Node[] { seq1, seq2 });
-        Repeater repeater = new Repeater(selector);
+        Selector selector = new Selector();
+        selector.AddNodes(seq1, seq2);
+        Repeater repeater = new Repeater();
+        repeater.AddNode(selector);
         _behaviorTree.SetRootNode(repeater);
+
+        _behaviorTree.Start();
     }
 
     private void Update()

@@ -62,6 +62,10 @@ namespace BehaviorTreeSample
                 {
                     Node child = cnode.Children[cnode.CurrentChildIndex];
                     BehaviorStatus childStatus = Execute(child);
+                    if (childStatus == BehaviorStatus.Running)
+                    {
+                        return BehaviorStatus.Running;
+                    }
                     cnode.OnChildExecuted(childStatus);
                 }
                 return cnode.Status;
@@ -73,8 +77,13 @@ namespace BehaviorTreeSample
             }
         }
 
+        /// <summary>
+        /// ツリーを開始
+        /// </summary>
         public void Start()
         {
+            Debug.Log("Tree start.");
+
             CallOnAwake(_rootNode);
         }
 
