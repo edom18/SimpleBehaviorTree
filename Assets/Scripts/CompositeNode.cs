@@ -79,5 +79,13 @@ namespace BehaviorTreeSample
                 _children.Add(child);
             }
         }
+
+        public override void AddNodes(params Node[] nodes)
+        {
+            foreach (var node in nodes)
+            {
+                AddNode(node);
+            }
+        }
     }
 }

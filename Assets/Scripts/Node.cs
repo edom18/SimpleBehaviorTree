@@ -58,5 +58,14 @@ namespace BehaviorTreeSample
         {
 
         }
+
+        /// <summary>
+        /// 子ノードを複数追加する
+        /// </summary>
+        /// <param name="nodes">追加する子ノード郡</param>
+        public virtual void AddNodes(params Node[] nodes)
+        {
+
+        }
     }
 }
