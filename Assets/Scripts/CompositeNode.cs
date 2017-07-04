@@ -9,6 +9,13 @@ namespace BehaviorTreeSample
     {
         //protected IEnumerator<Node> _childNodes;
 
+        private bool _needsConditionalAbort = false;
+        public bool NeedsConditionalAbort
+        {
+            get { return _needsConditionalAbort; }
+            set { _needsConditionalAbort = value; }
+        }
+
         protected int _currentChildIndex = 0;
         public int CurrentChildIndex
         {
