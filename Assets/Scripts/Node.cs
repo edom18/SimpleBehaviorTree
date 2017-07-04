@@ -14,6 +14,13 @@ namespace BehaviorTreeSample
             set { _owner = value; }
         }
 
+        private int _index = -1;
+        public int Index
+        {
+            get { return _index; }
+            set { _index = value; }
+        }
+
         // 現在のステータス
         protected BehaviorStatus _status = BehaviorStatus.Inactive;
         public BehaviorStatus Status
