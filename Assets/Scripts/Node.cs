@@ -56,7 +56,7 @@ namespace BehaviorTreeSample
         /// <param name="child">追加する子ノード</param>
         public virtual void AddNode(Node child)
         {
-
+            // do nothing.
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace BehaviorTreeSample
         /// <param name="nodes">追加する子ノード郡</param>
         public virtual void AddNodes(params Node[] nodes)
         {
-
+            // do nothing.
         }
     }
 }
