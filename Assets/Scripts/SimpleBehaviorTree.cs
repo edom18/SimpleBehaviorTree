@@ -62,8 +62,25 @@ namespace BehaviorTreeSample
         /// <returns>見つかった祖先ノードID</returns>
         private int CommonAncestorNode(int node1, int node2)
         {
-            // TODO: あとで実装
-            return -1;
+            HashSet<int> parentNodes = new HashSet<int>();
+
+            // 再帰的に祖先のIndexをリスト化する
+            Node parent1 = _nodeList[node1].ParentNode;
+            while (parent1 != null)
+            {
+                parentNodes.Add(parent1.Index);
+                parent1 = parent1.ParentNode;
+            }
+
+            Node parent2 = _nodeList[node2].ParentNode;
+            int num = parent2.Index;
+            while (!parentNodes.Contains(num))
+            {
+                parent2 = parent2.ParentNode;
+                num = parent2.Index;
+            }
+
+            return num;
         }
 
         /// <summary>
@@ -121,13 +138,6 @@ namespace BehaviorTreeSample
         /// <param name="node">実行するノード</param>
         private BehaviorStatus Execute(Node node)
         {
-            int abortIndex = ReevaluateConditionalTasks();
-            if (abortIndex != -1)
-            {
-                // 中断したノードと現在実行中のノードの共通祖先を見つける
-                int caIndex = CommonAncestorNode(abortIndex, _activeNodeIndex);
-            }
-
             // Compositeノードの場合は再帰処理
             if (node is CompositeNode)
             {
@@ -201,7 +211,24 @@ namespace BehaviorTreeSample
                 return;
             }
 
-            BehaviorStatus status = Execute(_rootNode);
+            int abortIndex = ReevaluateConditionalTasks();
+            if (abortIndex != -1)
+            {
+                // 中断したノードと現在実行中のノードの共通祖先を見つける
+                int caIndex = CommonAncestorNode(abortIndex, _activeNodeIndex);
+            }
+
+            BehaviorStatus status = BehaviorStatus.Inactive;
+            if (_activeNodeIndex == -1)
+            {
+                status = Execute(_rootNode);
+            }
+            else
+            {
+                Node node = _nodeList[_activeNodeIndex];
+                status = Execute(node);
+            }
+
             if (status == BehaviorStatus.Completed)
             {
                 _isCompleted = true;
