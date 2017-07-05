@@ -46,6 +46,8 @@ namespace BehaviorTreeSample
 
         private bool _isCompleted = false;
 
+        private int _activeNodeIndex = -1;
+
         // コンストラクタ
         public SimpleBehaviorTree(GameObject owner)
         {
@@ -92,6 +94,10 @@ namespace BehaviorTreeSample
             }
         }
 
+        /// <summary>
+        /// 再評価が必要なノードを再評価する
+        /// </summary>
+        /// <returns>再評価して変化のあったノードのIndex</returns>
         private int ReevaluateConditionalTasks()
         {
             for (int i = 0; i < _reevaluateList.Count; i++)
@@ -102,10 +108,8 @@ namespace BehaviorTreeSample
                 // 前回の状態と変化していたら、祖先まで遡って処理を停止する
                 if (cr.Status != status)
                 {
-
+                    return cr.Index;
                 }
-
-                return cr.Index;
             }
 
             return -1;
@@ -120,7 +124,8 @@ namespace BehaviorTreeSample
             int abortIndex = ReevaluateConditionalTasks();
             if (abortIndex != -1)
             {
-
+                // 中断したノードと現在実行中のノードの共通祖先を見つける
+                int caIndex = CommonAncestorNode(abortIndex, _activeNodeIndex);
             }
 
             // Compositeノードの場合は再帰処理
@@ -132,6 +137,9 @@ namespace BehaviorTreeSample
                 {
                     Node child = cnode.Children[cnode.CurrentChildIndex];
                     BehaviorStatus childStatus = Execute(child);
+
+                    // 現在実行中のIndexを更新する
+                    _activeNodeIndex = child.Index;
 
                     // 再評価が必要な場合はそれをリストに追加
                     if (cnode.NeedsConditionalAbort)
@@ -165,6 +173,15 @@ namespace BehaviorTreeSample
         }
 
         /// <summary>
+        /// ルートノードを設定する
+        /// </summary>
+        /// <param name="node">ルートノードとして設定するノード</param>
+        public void SetRootNode(Node node)
+        {
+            _rootNode = node;
+        }
+
+        /// <summary>
         /// ツリーを開始
         /// </summary>
         public void Start()
@@ -174,6 +191,9 @@ namespace BehaviorTreeSample
             CallOnAwake(_rootNode);
         }
 
+        /// <summary>
+        /// ツリーの状態をUpdate
+        /// </summary>
         public void Update()
         {
             if (_isCompleted)
@@ -186,15 +206,6 @@ namespace BehaviorTreeSample
             {
                 _isCompleted = true;
             }
-        }
-
-        /// <summary>
-        /// ルートノードを設定する
-        /// </summary>
-        /// <param name="node">ルートノードとして設定するノード</param>
-        public void SetRootNode(Node node)
-        {
-            _rootNode = node;
         }
     }
 }
