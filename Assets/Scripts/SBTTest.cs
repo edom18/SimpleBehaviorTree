@@ -54,6 +54,7 @@ public class SBTTest : MonoBehaviour
         });
 
         Sequencer seq1 = new Sequencer();
+        seq1.NeedsConditionalAbort = true;
         seq1.AddNodes(condition, rotateToPoint1, movetoPoint1);
         #endregion ### ポイント1への移動 ###
 
@@ -82,6 +83,7 @@ public class SBTTest : MonoBehaviour
         });
 
         Sequencer seq2 = new Sequencer();
+        seq2.NeedsConditionalAbort = true;
         seq2.AddNodes(rotateToPoint2, movetoPoint2);
         #endregion ### ポイント2への移動 ###
 
