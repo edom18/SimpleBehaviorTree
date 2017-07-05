@@ -21,6 +21,13 @@ namespace BehaviorTreeSample
             set { _index = value; }
         }
 
+        protected Node _parentNode;
+        public Node ParentNode
+        {
+            get { return _parentNode; }
+            set { _parentNode = value; }
+        }
+
         // 現在のステータス
         protected BehaviorStatus _status = BehaviorStatus.Inactive;
         public BehaviorStatus Status

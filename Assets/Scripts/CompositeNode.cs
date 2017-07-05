@@ -83,6 +83,7 @@ namespace BehaviorTreeSample
         {
             if (!_children.Contains(child))
             {
+                child.ParentNode = this;
                 _children.Add(child);
             }
         }
