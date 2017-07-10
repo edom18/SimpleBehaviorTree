@@ -44,6 +44,9 @@ namespace BehaviorTreeSample
         private List<Node> _nodeList = new List<Node>();
         private List<ConditionalReevaluate> _reevaluateList = new List<ConditionalReevaluate>();
 
+        // 現在実行中の枝のスタックを保持する
+        private Stack<int> _activeStack = new Stack<int>();
+
         private bool _isCompleted = false;
 
         private int _activeNodeIndex = -1;
@@ -52,6 +55,30 @@ namespace BehaviorTreeSample
         public SimpleBehaviorTree(GameObject owner)
         {
             _owner = owner;
+        }
+
+        /// <summary>
+        /// アクティブなノードとしてスタックにPushする
+        /// </summary>
+        /// <param name="node">追加するノード</param>
+        private void PushNode(Node node)
+        {
+            if (_activeStack.Count == 0 || _activeStack.Peek() != node.Index)
+            {
+                _activeStack.Push(node.Index);
+            }
+        }
+
+        /// <summary>
+        /// 指定したノードをスタックの上部から取り除く
+        /// </summary>
+        /// <param name="node">取り除くノード</param>
+        private void PopNode(Node node)
+        {
+            if (_activeStack.Peek() == node.Index)
+            {
+                _activeStack.Pop();
+            }
         }
 
         /// <summary>
@@ -145,11 +172,11 @@ namespace BehaviorTreeSample
 
                 while (cnode.CanExecute())
                 {
+                    // 実行中のノードをActive Stackに積む
+                    PushNode(node);
+
                     Node child = cnode.Children[cnode.CurrentChildIndex];
                     BehaviorStatus childStatus = Execute(child);
-
-                    // 現在実行中のIndexを更新する
-                    _activeNodeIndex = child.Index;
 
                     // 再評価が必要な場合はそれをリストに追加
                     if (cnode.NeedsConditionalAbort)
@@ -167,9 +194,12 @@ namespace BehaviorTreeSample
 
                     if (childStatus == BehaviorStatus.Running)
                     {
+
                         return BehaviorStatus.Running;
                     }
 
+                    // 実行が終了したノードをスタックから外す
+                    PopNode(node);
                     cnode.OnChildExecuted(childStatus);
                 }
 
@@ -177,6 +207,9 @@ namespace BehaviorTreeSample
             }
             else
             {
+                // 現在実行中のIndexを更新する
+                _activeNodeIndex = node.Index;
+
                 // ActionNodeの場合はただ実行だけする
                 return node.OnUpdate();
             }
