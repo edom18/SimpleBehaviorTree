@@ -70,6 +70,12 @@ namespace BehaviorTreeSample
         public virtual void OnAbort()
         {
             OnEnd();
+
+            CompositeNode cnode = ParentNode as CompositeNode;
+            if (cnode != null)
+            {
+                cnode.OnConditionalAbort(Index);
+            }
         }
 
         /// <summary>
