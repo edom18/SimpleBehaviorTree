@@ -45,7 +45,7 @@ namespace BehaviorTreeSample
         /// <param name="childIndex">中断を呼び出した子ノードのインデックス</param>
         public virtual void OnConditionalAbort(int childIndex)
         {
-
+            _currentChildIndex = childIndex;
         }
 
         /// <summary>
