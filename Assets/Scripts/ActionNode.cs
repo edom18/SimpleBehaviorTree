@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace BehaviorTreeSample
 {
@@ -7,16 +8,16 @@ namespace BehaviorTreeSample
     /// </summary>
     public class ActionNode : Node
     {
-        private Func<BehaviorStatus> _action;
+        private Func<GameObject, BehaviorStatus> _action;
 
-        public ActionNode(Func<BehaviorStatus> action)
+        public ActionNode(Func<GameObject, BehaviorStatus> action)
         {
             _action = action;
         }
 
         public override BehaviorStatus OnUpdate()
         {
-            return _action.Invoke();
+            return _action.Invoke(Owner);
         }
     }
 }

@@ -25,19 +25,19 @@ public class SBTTest : MonoBehaviour
         _behaviorTree = new SimpleBehaviorTree(gameObject);
 
         // ポイント1へ向かっているかの分岐
-        ConditionalNode condition = new ConditionalNode(() =>
+        ConditionalNode condition = new ConditionalNode((owner) =>
         {
             return _forPoint1 ? BehaviorStatus.Sucess : BehaviorStatus.Failure;
         });
 
         #region ### ポイント1への移動 ###
-        ActionNode rotateToPoint1 = new ActionNode(() =>
+        ActionNode rotateToPoint1 = new ActionNode((owner) =>
         {
             _target.LookAt(_point1);
             return BehaviorStatus.Sucess;
         });
 
-        ActionNode movetoPoint1 = new ActionNode(() =>
+        ActionNode movetoPoint1 = new ActionNode((owner) =>
         {
             Vector3 dir = (_point1.position - _target.position).normalized;
             _target.position += dir * _speed;
@@ -59,13 +59,13 @@ public class SBTTest : MonoBehaviour
         #endregion ### ポイント1への移動 ###
 
         #region ### ポイント2への移動 ###
-        ActionNode rotateToPoint2 = new ActionNode(() =>
+        ActionNode rotateToPoint2 = new ActionNode((owner) =>
         {
             _target.LookAt(_point2);
             return BehaviorStatus.Sucess;
         });
 
-        ActionNode movetoPoint2 = new ActionNode(() =>
+        ActionNode movetoPoint2 = new ActionNode((owner) =>
         {
             Vector3 dir = (_point2.position - _target.position).normalized;
             _target.position += dir * _speed;
@@ -90,6 +90,7 @@ public class SBTTest : MonoBehaviour
         // 定義したビヘイビアを設定
         Selector selector = new Selector();
         selector.AddNodes(seq1, seq2);
+
         Repeater repeater = new Repeater();
         repeater.AddNode(selector);
         _behaviorTree.SetRootNode(repeater);
