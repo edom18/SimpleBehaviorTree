@@ -65,6 +65,14 @@ namespace BehaviorTreeSample
         }
 
         /// <summary>
+        /// ノードが中断された際に呼び出される
+        /// </summary>
+        public virtual void OnAbort()
+        {
+            OnEnd();
+        }
+
+        /// <summary>
         /// 子ノードを追加する
         /// </summary>
         /// <param name="child">追加する子ノード</param>
