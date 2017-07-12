@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 using UnityEngine;
 
@@ -165,6 +166,9 @@ namespace BehaviorTreeSample
         /// <param name="node">実行するノード</param>
         private BehaviorStatus Execute(Node node)
         {
+            // 実行中のノードをActive Stackに積む
+            PushNode(node);
+
             // Compositeノードの場合は再帰処理
             if (node is CompositeNode)
             {
@@ -172,9 +176,6 @@ namespace BehaviorTreeSample
 
                 while (cnode.CanExecute())
                 {
-                    // 実行中のノードをActive Stackに積む
-                    PushNode(node);
-
                     Node child = cnode.Children[cnode.CurrentChildIndex];
                     BehaviorStatus childStatus = Execute(child);
 
@@ -194,13 +195,16 @@ namespace BehaviorTreeSample
 
                     if (childStatus == BehaviorStatus.Running)
                     {
-
                         return BehaviorStatus.Running;
                     }
 
+                    cnode.OnChildExecuted(childStatus);
+                }
+
+                if (cnode.Status != BehaviorStatus.Running)
+                {
                     // 実行が終了したノードをスタックから外す
                     PopNode(node);
-                    cnode.OnChildExecuted(childStatus);
                 }
 
                 return cnode.Status;
@@ -210,8 +214,13 @@ namespace BehaviorTreeSample
                 // 現在実行中のIndexを更新する
                 _activeNodeIndex = node.Index;
 
-                // ActionNodeの場合はただ実行だけする
-                return node.OnUpdate();
+                BehaviorStatus status = node.OnUpdate();
+                if (status != BehaviorStatus.Running)
+                {
+                    PopNode(node);
+                }
+
+                return status;
             }
         }
 
@@ -249,6 +258,30 @@ namespace BehaviorTreeSample
             {
                 // 中断したノードと現在実行中のノードの共通祖先を見つける
                 int caIndex = CommonAncestorNode(abortIndex, _activeNodeIndex);
+
+                Node activeNode = _nodeList[_activeNodeIndex];
+                activeNode.OnAbort();
+
+                int index = -1;
+                while (_activeStack.Count != 0)
+                {
+                    index = _activeStack.Pop();
+                    if (index == caIndex)
+                    {
+                        break;
+                    }
+
+                    Node node = _nodeList[index];
+                    node.OnAbort();
+
+                    ConditionalReevaluate cr = _reevaluateList.FirstOrDefault(r => r.Index == index);
+                    if (cr != null)
+                    {
+                        _reevaluateList.Remove(cr);
+                    }
+                }
+
+                _activeNodeIndex = caIndex;
             }
 
             BehaviorStatus status = BehaviorStatus.Inactive;
