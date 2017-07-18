@@ -45,14 +45,15 @@ namespace BehaviorTreeSample
         /// <param name="childNodeIndex">中断を呼び出した子ノードの全体でのインデックス</param>
         public virtual void OnConditionalAbort(int childNodeIndex)
         {
-            for (int i = 0; i < _children.Count; i++)
-            {
-                if (_children[i].Index == childNodeIndex)
-                {
-                    _currentChildIndex = i;
-                    break;
-                }
-            }
+            _currentChildIndex = 0;
+            //for (int i = 0; i < _children.Count; i++)
+            //{
+            //    if (_children[i].Index == childNodeIndex)
+            //    {
+            //        _currentChildIndex = i;
+            //        break;
+            //    }
+            //}
         }
 
         /// <summary>
@@ -61,7 +62,7 @@ namespace BehaviorTreeSample
         /// <param name="childStatus">子ノードの実行結果</param>
         public virtual void OnChildExecuted(BehaviorStatus childStatus)
         {
-
+            // do nothing.
         }
         #endregion ### CompositeNode ###
 
@@ -79,6 +80,12 @@ namespace BehaviorTreeSample
             {
                 Node current = _children[_currentChildIndex];
             }
+        }
+
+        public override void OnAbort()
+        {
+            base.OnAbort();
+            _currentChildIndex = 0;
         }
 
         public override BehaviorStatus OnUpdate()
