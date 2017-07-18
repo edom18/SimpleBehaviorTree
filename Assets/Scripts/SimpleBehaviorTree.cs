@@ -67,19 +67,17 @@ namespace BehaviorTreeSample
             if (_activeStack.Count == 0 || _activeStack.Peek() != node.Index)
             {
                 _activeStack.Push(node.Index);
+                _activeNodeIndex = _activeStack.Peek();
             }
         }
 
         /// <summary>
-        /// 指定したノードをスタックの上部から取り除く
+        /// ノードをスタックから取り除く
         /// </summary>
-        /// <param name="node">取り除くノード</param>
-        private void PopNode(Node node)
+        private void PopNode()
         {
-            if (_activeStack.Peek() == node.Index)
-            {
-                _activeStack.Pop();
-            }
+            _activeStack.Pop();
+            _activeNodeIndex = _activeStack.Peek();
         }
 
         /// <summary>
@@ -153,6 +151,12 @@ namespace BehaviorTreeSample
                 // 前回の状態と変化していたら、祖先まで遡って処理を停止する
                 if (cr.Status != status)
                 {
+                    CompositeNode cnode = _nodeList[cr.CompositeIndex] as CompositeNode;
+                    if (cnode != null)
+                    {
+                        cnode.OnConditionalAbort(cr.Index);
+                    }
+                    _reevaluateList.Remove(cr);
                     return cr.Index;
                 }
             }
@@ -204,20 +208,17 @@ namespace BehaviorTreeSample
                 if (cnode.Status != BehaviorStatus.Running)
                 {
                     // 実行が終了したノードをスタックから外す
-                    PopNode(node);
+                    PopNode();
                 }
 
                 return cnode.Status;
             }
             else
             {
-                // 現在実行中のIndexを更新する
-                _activeNodeIndex = node.Index;
-
                 BehaviorStatus status = node.OnUpdate();
                 if (status != BehaviorStatus.Running)
                 {
-                    PopNode(node);
+                    PopNode();
                 }
 
                 return status;
@@ -262,26 +263,23 @@ namespace BehaviorTreeSample
                 Node activeNode = _nodeList[_activeNodeIndex];
                 activeNode.OnAbort();
 
-                int index = -1;
                 while (_activeStack.Count != 0)
                 {
-                    index = _activeStack.Pop();
-                    if (index == caIndex)
+                    PopNode();
+                    activeNode = _nodeList[_activeNodeIndex];
+                    activeNode.OnAbort();
+
+                    if (_activeNodeIndex == caIndex)
                     {
                         break;
                     }
 
-                    Node node = _nodeList[index];
-                    node.OnAbort();
-
-                    ConditionalReevaluate cr = _reevaluateList.FirstOrDefault(r => r.Index == index);
+                    ConditionalReevaluate cr = _reevaluateList.FirstOrDefault(r => r.Index == _activeNodeIndex);
                     if (cr != null)
                     {
                         _reevaluateList.Remove(cr);
                     }
                 }
-
-                _activeNodeIndex = caIndex;
             }
 
             BehaviorStatus status = BehaviorStatus.Inactive;
