@@ -293,10 +293,7 @@ namespace BehaviorTreeSample
                 status = Execute(node);
             }
 
-            if (status == BehaviorStatus.Completed)
-            {
-                _isCompleted = true;
-            }
+            // TODO: calc completed.
         }
     }
 }
