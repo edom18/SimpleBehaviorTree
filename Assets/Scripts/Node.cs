@@ -48,13 +48,21 @@ namespace BehaviorTreeSample
         /// </summary>
         public virtual void OnStart()
         {
+            Debug.Log("OnStart");
             _status = BehaviorStatus.Running;
         }
 
         /// <summary>
         /// ノード実行中（Running）に毎フレーム呼ばれる
         /// </summary>
-        public abstract BehaviorStatus OnUpdate();
+        public virtual BehaviorStatus OnUpdate()
+        {
+            if (_status == BehaviorStatus.Inactive)
+            {
+                OnStart();
+            }
+            return _status;
+        }
 
         /// <summary>
         /// ノードの実行が終了したら呼ばれる

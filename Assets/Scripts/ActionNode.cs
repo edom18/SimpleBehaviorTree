@@ -17,6 +17,7 @@ namespace BehaviorTreeSample
 
         public override BehaviorStatus OnUpdate()
         {
+            base.OnUpdate();
             return _action.Invoke(Owner);
         }
     }

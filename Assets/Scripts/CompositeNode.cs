@@ -7,8 +7,6 @@ namespace BehaviorTreeSample
     /// </summary>
     public class CompositeNode : Node
     {
-        //protected IEnumerator<Node> _childNodes;
-
         private bool _needsConditionalAbort = false;
         public bool NeedsConditionalAbort
         {
@@ -77,6 +75,9 @@ namespace BehaviorTreeSample
 
         public override void OnStart()
         {
+            base.OnStart();
+            _currentChildIndex = 0;
+
             if (CanExecute())
             {
                 Node current = _children[_currentChildIndex];
@@ -91,6 +92,7 @@ namespace BehaviorTreeSample
 
         public override BehaviorStatus OnUpdate()
         {
+            base.OnUpdate();
             return _status;
         }
 
