@@ -68,6 +68,7 @@ namespace BehaviorTreeSample
             {
                 _activeStack.Push(node.Index);
                 _activeNodeIndex = _activeStack.Peek();
+                Debug.LogFormat("PushNode: {0}", node.Index);
             }
         }
 
@@ -76,8 +77,9 @@ namespace BehaviorTreeSample
         /// </summary>
         private void PopNode()
         {
-            _activeStack.Pop();
+            int popedIndex = _activeStack.Pop();
             _activeNodeIndex = _activeStack.Peek();
+            Debug.LogFormat("PopNode: {0}", popedIndex);
         }
 
         /// <summary>
