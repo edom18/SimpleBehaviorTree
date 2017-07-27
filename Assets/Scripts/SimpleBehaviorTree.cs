@@ -68,6 +68,7 @@ namespace BehaviorTreeSample
             {
                 _activeStack.Push(node.Index);
                 _activeNodeIndex = _activeStack.Peek();
+
                 Debug.LogFormat("PushNode: {0}", node.Index);
             }
         }
@@ -79,6 +80,7 @@ namespace BehaviorTreeSample
         {
             int popedIndex = _activeStack.Pop();
             _activeNodeIndex = _activeStack.Peek();
+
             Debug.LogFormat("PopNode: {0}", popedIndex);
         }
 
@@ -210,6 +212,7 @@ namespace BehaviorTreeSample
                 if (cnode.Status != BehaviorStatus.Running)
                 {
                     // 実行が終了したノードをスタックから外す
+                    cnode.OnEnd();
                     PopNode();
                 }
 
@@ -220,6 +223,7 @@ namespace BehaviorTreeSample
                 BehaviorStatus status = node.OnUpdate();
                 if (status != BehaviorStatus.Running)
                 {
+                    node.OnEnd();
                     PopNode();
                 }
 
