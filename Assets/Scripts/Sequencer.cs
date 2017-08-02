@@ -12,7 +12,7 @@
         public override void OnChildExecuted(BehaviorStatus childStatus)
         {
             _currentChildIndex++;
-            _status = childStatus;
+            base.OnChildExecuted(childStatus);
         }
 
         public override bool CanExecute()
