@@ -71,7 +71,7 @@ namespace BehaviorTreeSample
                 return;
             }
 
-            if (childStatus == BehaviorStatus.Sucess)
+            if (childStatus == BehaviorStatus.Sucess || childStatus == BehaviorStatus.Completed)
             {
                 _status = BehaviorStatus.Completed;
             }
