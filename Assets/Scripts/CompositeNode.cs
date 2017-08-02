@@ -14,6 +14,8 @@ namespace BehaviorTreeSample
             set { _needsConditionalAbort = value; }
         }
 
+        private bool _hasConditionalNode = false;
+
         protected int _currentChildIndex = 0;
         public int CurrentChildIndex
         {
@@ -26,10 +28,7 @@ namespace BehaviorTreeSample
             get { return _children; }
         }
 
-        public CompositeNode()
-        {
-
-        }
+        public CompositeNode() { }
 
         #region ### CompositeNode ###
         public virtual bool CanExecute()
@@ -57,11 +56,25 @@ namespace BehaviorTreeSample
 
         /// <summary>
         /// 子ノードの実行が終わった際に呼び出される
+        /// すべての子ノードが実行完了かつSucessの場合はCompleteにする
         /// </summary>
         /// <param name="childStatus">子ノードの実行結果</param>
         public virtual void OnChildExecuted(BehaviorStatus childStatus)
         {
-            // do nothing.
+            if (_currentChildIndex < _children.Count)
+            {
+                return;
+            }
+
+            if (NeedsConditionalAbort && _hasConditionalNode)
+            {
+                return;
+            }
+
+            if (childStatus == BehaviorStatus.Sucess)
+            {
+                _status = BehaviorStatus.Completed;
+            }
         }
         #endregion ### CompositeNode ###
 
@@ -71,6 +84,15 @@ namespace BehaviorTreeSample
         public override void OnAwake()
         {
             _currentChildIndex = 0;
+
+            for (int i = 0; i < _children.Count; i++)
+            {
+                if (_children[i] is ConditionalNode)
+                {
+                    _hasConditionalNode = true;
+                    return;
+                }
+            }
         }
 
         public override void OnStart()
