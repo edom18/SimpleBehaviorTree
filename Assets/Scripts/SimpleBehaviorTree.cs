@@ -69,7 +69,7 @@ namespace BehaviorTreeSample
                 _activeStack.Push(node.Index);
                 _activeNodeIndex = _activeStack.Peek();
 
-                Debug.LogFormat("PushNode: {0}", node.Index);
+                //Debug.LogFormat("PushNode: {0}", node.Index);
             }
         }
 
@@ -81,7 +81,7 @@ namespace BehaviorTreeSample
             int popedIndex = _activeStack.Pop();
             _activeNodeIndex = _activeStack.Peek();
 
-            Debug.LogFormat("PopNode: {0}", popedIndex);
+            //Debug.LogFormat("PopNode: {0}", popedIndex);
         }
 
         /// <summary>
@@ -299,7 +299,12 @@ namespace BehaviorTreeSample
                 status = Execute(node);
             }
 
-            // TODO: calc completed.
+            if (status == BehaviorStatus.Completed)
+            {
+                Debug.Log("Behavior Tree has been completed.");
+
+                _isCompleted = true;
+            }
         }
     }
 }
