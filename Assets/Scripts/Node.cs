@@ -57,7 +57,7 @@ namespace BehaviorTreeSample
         /// </summary>
         public virtual BehaviorStatus OnUpdate()
         {
-            if (_status == BehaviorStatus.Inactive)
+            if (_status == BehaviorStatus.Inactive || _status != BehaviorStatus.Completed)
             {
                 OnStart();
             }
@@ -69,6 +69,11 @@ namespace BehaviorTreeSample
         /// </summary>
         public virtual void OnEnd()
         {
+            if (_status == BehaviorStatus.Completed)
+            {
+                return;
+            }
+
             _status = BehaviorStatus.Inactive;
         }
 
