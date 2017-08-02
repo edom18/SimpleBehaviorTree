@@ -14,7 +14,9 @@ namespace BehaviorTreeSample
 
         public override BehaviorStatus OnUpdate()
         {
-            return _condition.Invoke(Owner);
+            base.OnUpdate();
+            _status = _condition.Invoke(Owner);
+            return _status;
         }
     }
 }
