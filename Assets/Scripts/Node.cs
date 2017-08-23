@@ -28,11 +28,23 @@ namespace BehaviorTreeSample
             set { _parentNode = value; }
         }
 
+        protected string _name;
+        public string Name
+        {
+            get { return _name; }
+            set { _name = value; }
+        }
+
         // 現在のステータス
         protected BehaviorStatus _status = BehaviorStatus.Inactive;
         public BehaviorStatus Status
         {
             get { return _status; }
+        }
+
+        public Node()
+        {
+            _name = GetType().ToString();
         }
 
         /// <summary>
@@ -48,7 +60,7 @@ namespace BehaviorTreeSample
         /// </summary>
         public virtual void OnStart()
         {
-            Debug.Log("OnStart");
+            Debug.Log("OnStart" + Name);
             _status = BehaviorStatus.Running;
         }
 
