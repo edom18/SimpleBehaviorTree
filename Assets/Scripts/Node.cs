@@ -60,7 +60,7 @@ namespace BehaviorTreeSample
         /// </summary>
         public virtual void OnStart()
         {
-            Debug.Log("OnStart" + Name);
+            Debug.Log("[OnStart] " + Name);
             _status = BehaviorStatus.Running;
         }
 
@@ -69,10 +69,17 @@ namespace BehaviorTreeSample
         /// </summary>
         public virtual BehaviorStatus OnUpdate()
         {
-            if (_status == BehaviorStatus.Inactive || _status != BehaviorStatus.Completed)
+            if (_status == BehaviorStatus.Completed)
+            {
+                Debug.Log("This task already has been completed.");
+                return _status;
+            }
+
+            if (_status == BehaviorStatus.Inactive)
             {
                 OnStart();
             }
+
             return _status;
         }
 
