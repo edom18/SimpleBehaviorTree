@@ -36,6 +36,7 @@ public class SBTTest2 : MonoBehaviour
             _target.LookAt(_point1);
             return BehaviorStatus.Sucess;
         });
+        rotateToPoint1.Name = "RotateToPoint1";
 
         ActionNode movetoPoint1 = new ActionNode((owner) =>
         {
@@ -52,6 +53,7 @@ public class SBTTest2 : MonoBehaviour
 
             return BehaviorStatus.Running;
         });
+        movetoPoint1.Name = "MoveToPoint1";
 
         Sequencer seq1 = new Sequencer();
         //seq1.NeedsConditionalAbort = true;
@@ -64,6 +66,7 @@ public class SBTTest2 : MonoBehaviour
             _target.LookAt(_point2);
             return BehaviorStatus.Sucess;
         });
+        rotateToPoint2.Name = "rotateToPoint2";
 
         ActionNode movetoPoint2 = new ActionNode((owner) =>
         {
@@ -80,6 +83,7 @@ public class SBTTest2 : MonoBehaviour
 
             return BehaviorStatus.Running;
         });
+        movetoPoint2.Name = "MovetoPoint2";
 
         ActionNode moveUp = new ActionNode((owner) =>
         {
@@ -93,6 +97,7 @@ public class SBTTest2 : MonoBehaviour
 
             return BehaviorStatus.Running;
         });
+        moveUp.Name = "MoveUp";
 
         Sequencer seq3 = new Sequencer();
         //seq3.NeedsConditionalAbort = true;
